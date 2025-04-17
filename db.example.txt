@@ -1,0 +1,5 @@
+total_encounters=10000
+last_shiny=0
+shinies_found=[
+	{ pokemon: "pikachu", time_found: "2025-01-01 12:00:00", img_path: "images/shinies/rattata_10821", last_shiny: 0, total_encounters: 10000 }
+]

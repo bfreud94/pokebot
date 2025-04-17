@@ -1,4 +1,17 @@
+# Python Environment
 __pycache__
 bin
 include
 lib
+
+# Generated Files
+encounters.txt
+
+# Shinies found
+/shinies
+
+# Env
+.env
+
+# Database
+db.txt
