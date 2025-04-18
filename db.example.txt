@@ -1,5 +1,15 @@
-total_encounters=10000
-last_shiny=0
+total_encounters=10184
+last_shiny=10184
 shinies_found=[
-	{ pokemon: "pikachu", time_found: "2025-01-01 12:00:00", img_path: "images/shinies/rattata_10821", last_shiny: 0, total_encounters: 10000 }
+	{ pokemon: "pikachu", time_found: "2025-01-01 12:00:00", img_path: "images/shinies/rattata_10821.png", last_shiny: 0, total_encounters: 10000 },
+	{'pokemon': 'rattata', 'time_found': '2025-04-17 17:00:31', 'img_path': 'images/shinies/rattata_10106.png', 'last_shiny': 10086, 'total_encounters': 10106},
+	{'pokemon': 'pidgey', 'time_found': '2025-04-17 17:02:08', 'img_path': 'images/shinies/pidgey_10116.png', 'last_shiny': 10106, 'total_encounters': 10116},
+	{'pokemon': 'rattata', 'time_found': '2025-04-18 00:05:29', 'img_path': 'images/shinies/rattata_10118.png', 'last_shiny': 10116, 'total_encounters': 10118},
+	{'pokemon': 'rattata', 'time_found': '2025-04-18 00:06:31', 'img_path': 'images/shinies/rattata_10129.png', 'last_shiny': 10118, 'total_encounters': 10129},
+	{'pokemon': 'rattata', 'time_found': '2025-04-18 00:07:33', 'img_path': 'images/shinies/rattata_10140.png', 'last_shiny': 10129, 'total_encounters': 10140},
+	{'pokemon': 'rattata', 'time_found': '2025-04-18 00:08:57', 'img_path': 'images/shinies/rattata_10156.png', 'last_shiny': 10140, 'total_encounters': 10156},
+	{'pokemon': 'rattata', 'time_found': '2025-04-18 00:09:34', 'img_path': 'images/shinies/rattata_10162.png', 'last_shiny': 10156, 'total_encounters': 10162},
+	{'pokemon': 'mankey', 'time_found': '2025-04-18 00:09:58', 'img_path': 'images/shinies/mankey_10165.png', 'last_shiny': 10162, 'total_encounters': 10165},
+	{'pokemon': 'rattata', 'time_found': '2025-04-18 00:16:55', 'img_path': 'images/shinies/rattata_10180.png', 'last_shiny': 10165, 'total_encounters': 10180},
+	{'pokemon': 'spearow', 'time_found': '2025-04-18 00:17:29', 'img_path': 'images/shinies/spearow_10184.png', 'last_shiny': 10180, 'total_encounters': 10184}
 ]

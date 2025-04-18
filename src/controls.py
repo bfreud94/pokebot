@@ -1,40 +1,39 @@
-import pyautogui
-
-from util import sleep_with_speed
+from pyautogui import press, keyDown, keyUp
+from util.misc import sleep_with_speed
 
 def move_direction(direction, duration=2):
     print(f"Moving {direction} for {duration} seconds...")
     if direction == 'left':
-        pyautogui.keyDown('left')
+        keyDown('left')
         sleep_with_speed(duration=duration)
-        pyautogui.keyUp('left')
+        keyUp('left')
     elif direction == 'right':
-        pyautogui.keyDown('right')
+        keyDown('right')
         sleep_with_speed(duration=duration)
-        pyautogui.keyUp('right')
+        keyUp('right')
     elif direction == 'up':
-        pyautogui.keyDown('up')
+        keyDown('up')
         sleep_with_speed(duration=duration)
-        pyautogui.keyUp('up')
+        keyUp('up')
     elif direction == 'down':
-        pyautogui.keyDown('down')
+        keyDown('down')
         sleep_with_speed(duration=duration)
-        pyautogui.keyUp('down')
+        keyUp('down')
     print(f"Finished moving {direction}.")
 
 def press_button(button, duration=0.5, before_delay=0.5, after_delay=0.5):
     sleep_with_speed(before_delay)
     print(f"Pressing {button} for {duration} seconds...")
-    pyautogui.keyDown(button)
+    keyDown(button)
     sleep_with_speed(duration=duration)
-    pyautogui.keyUp(button)
+    keyUp(button)
     print(f"Finished pressing {button}.")
     sleep_with_speed(after_delay)
 
 def speed_up_game(indefinitely=False, duration=0.5):
     print("Speeding up the game...")
-    pyautogui.keyDown('space')
+    keyDown('space')
     if indefinitely:
        sleep_with_speed(duration=duration)
-       pyautogui.keyUp('space')
+       keyUp('space')
     print("Game speed increased.")

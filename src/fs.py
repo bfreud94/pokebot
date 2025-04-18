@@ -1,5 +1,3 @@
-from util import get_time
-
 def search_and_replace(file_path, search_text, replace_text):
     try:
         # Read the file content

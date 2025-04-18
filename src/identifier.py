@@ -1,12 +1,15 @@
 from cv2 import imread, IMREAD_GRAYSCALE, matchTemplate, minMaxLoc, TM_CCOEFF_NORMED
-from db import get_db_config, write_to_database
+from db import add_shiny_entry, get_db_config, update_database_value
 from log import log_encounter
 from mss import mss
 from os import path
-from screen import get_monitor_to_capture
 from PIL import Image
-from print_fns import print_encounter_data, print_is_in_picture, print_pokemon_name
-from util import get_percentage, get_pokemon_data
+from screen import get_monitor_to_capture
+
+from util.math import get_percentage
+from util.misc import get_time
+from util.pokemon import get_pokemon_data
+from util.print_fns import print_encounter_data, print_is_in_picture, print_pokemon_name
 
 def are_images_equal(image_path_one, image_path_two, confidence_threshold, print_fn, print_fn_args):
     try:
@@ -71,16 +74,27 @@ def check_for_shiny():
             if not is_in_picture(screen_path, regular_path):
                 print("Shiny form present! Stopping program.")
                 total_encounters += 1
-                write_to_database(f"total_encounters={total_encounters - 1}", f"total_encounters={total_encounters}")
+                update_database_value(f"total_encounters={total_encounters - 1}", f"total_encounters={total_encounters}")
+                update_database_value(f"last_shiny={last_shiny}", f"last_shiny={total_encounters}")
+                add_shiny_entry(format_entry(pokemon_name, total_encounters, last_shiny))
                 print_encounter_data(total_encounters, last_shiny)
                 log_encounter(pokemon_name.capitalize(), True, total_encounters, last_shiny)
                 return True, pokemon_name
             else:
                 print("Regular form present. Continuing.")
                 total_encounters += 1
-                write_to_database(f"total_encounters={total_encounters - 1}", f"total_encounters={total_encounters}")
+                update_database_value(f"total_encounters={total_encounters - 1}", f"total_encounters={total_encounters}")
                 print_encounter_data(total_encounters, last_shiny)
                 log_encounter(pokemon_name.capitalize(), False, total_encounters, last_shiny)
                 return False, pokemon_name
     print(f"No match found")
     return False
+
+def format_entry(pokemon_name, total_encounters, last_shiny):
+    return {
+        "pokemon": pokemon_name,
+        "time_found": get_time(),
+		"img_path": f"images/shinies/{pokemon_name}_{total_encounters}.png",
+		"last_shiny": last_shiny,
+		"total_encounters": total_encounters
+	}

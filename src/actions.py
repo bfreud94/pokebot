@@ -2,7 +2,7 @@ from battle import is_in_battle, exit_battle
 from controls import move_direction
 from identifier import check_for_shiny
 from os import _exit
-from util import sleep_with_speed
+from util.misc import sleep_with_speed
 
 def roam_grass(emulator_executable_path, rom_file_path):
     while True:
