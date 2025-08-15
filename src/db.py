@@ -3,6 +3,9 @@ from os import getenv
 
 from json import dumps, loads
 
+from util.misc import get_time
+from util.print_fns import print_with_time
+
 def get_db_file():
     db_file_path = getenv('DB_FILE_PATH')
     if db_file_path is None:
@@ -15,6 +18,20 @@ def get_db_config():
         db_data = read_database(db_file_path)
         return db_data
     return None
+
+def get_db_data():
+    db_data = get_db_config()
+    if db_data is None:
+        print_with_time("Error: Could not retrieve database configuration.")
+        return False
+
+    total_encounters = db_data["total_encounters"]
+    last_shiny = db_data["last_shiny"]
+
+    return {
+        "total_encounters": total_encounters,
+        "last_shiny": last_shiny
+    }
 
 def update_database_value(search_text, replace_text):
     db_path = get_db_file()
@@ -53,11 +70,11 @@ def add_shiny_entry(shiny_entry):
         with open(db_path, "w") as file:
             file.write(db_content)
 
-        print(f"Added shiny entry: {shiny_entry}")
+        print_with_time(f"Added shiny entry: {shiny_entry}")
     except FileNotFoundError:
-        print(f"Error: Database file '{db_path}' not found.")
+        print_with_time(f"Error: Database file '{db_path}' not found.")
     except Exception as e:
-        print(f"An error occurred while adding the shiny entry: {e}")
+        print_with_time(f"An error occurred while adding the shiny entry: {e}")
 
 def read_database(file_path):
     data = {"total_encounters": 0, "last_shiny": 0}
@@ -69,7 +86,18 @@ def read_database(file_path):
                 elif line.startswith("last_shiny"):
                     data["last_shiny"] = int(line.split("=")[1].strip())
     except FileNotFoundError:
-        print(f"Error: Database file '{file_path}' not found. Using default values.")
+        print_with_time(f"Error: Database file '{file_path}' not found. Using default values.")
     except Exception as e:
-        print(f"An error occurred while reading the database: {e}")
+        print_with_time(f"An error occurred while reading the database: {e}")
     return data
+
+def format_entry(pokemon_name, total_encounters, last_shiny):
+    current_hunt = total_encounters - last_shiny
+    return {
+        "pokemon": pokemon_name,
+        "time_found": get_time(),
+        "img_path": f"images/shinies/{pokemon_name}_{current_hunt}.png",
+		"last_shiny": last_shiny,
+        "current_hunt": current_hunt,
+		"total_encounters": total_encounters
+	}

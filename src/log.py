@@ -1,4 +1,5 @@
 from util.misc import get_time, is_vowel
+from util.print_fns import print_with_time
 
 def log_encounter_with_date(data, file):
     current_time = get_time()
@@ -11,10 +12,10 @@ def log_encounter(pokemon_name, is_shiny, total_encounters, last_shiny):
         if is_shiny:
             write_string += f"Encountered a Shiny {pokemon_name}!"
         else:
-            first_letter = pokemon_name[0].lower()
-            a_or_an = "a" if is_vowel(first_letter) else "an"
+            first_letter = pokemon_name[0]
+            a_or_an = "an" if is_vowel(first_letter) else "a"
             write_string += f"Encountered {a_or_an} {pokemon_name}"
         log_encounter_with_date(write_string, file)
         log_encounter_with_date(f"Total Encounters: {total_encounters}", file)
-        log_encounter_with_date(f"Encounters since Shiny: {last_shiny}", file)
-    print("Data written to encounters.txt")
+        log_encounter_with_date(f"Encounters since Shiny: {total_encounters - last_shiny}", file)
+    print_with_time("Data written to encounters.txt")

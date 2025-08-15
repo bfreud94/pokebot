@@ -1,3 +1,5 @@
+from util.print_fns import print_with_time
+
 def search_and_replace(file_path, search_text, replace_text):
     try:
         # Read the file content
@@ -11,8 +13,8 @@ def search_and_replace(file_path, search_text, replace_text):
         with open(file_path, "w") as file:
             file.write(updated_content)
 
-        print(f"Replaced '{search_text}' with '{replace_text}' in {file_path}.")
+        print_with_time(f"Replaced '{search_text}' with '{replace_text}' in {file_path}.")
     except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found.")
+        print_with_time(f"Error: File '{file_path}' not found.")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print_with_time(f"An error occurred: {e}")

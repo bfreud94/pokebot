@@ -1,15 +1,15 @@
 from cv2 import imread, IMREAD_GRAYSCALE, matchTemplate, minMaxLoc, TM_CCOEFF_NORMED
-from db import add_shiny_entry, get_db_config, update_database_value
+from db import add_shiny_entry, get_db_data, format_entry, update_database_value
 from log import log_encounter
 from mss import mss
 from os import path
-from PIL import Image
-from screen import get_monitor_to_capture
 
 from util.math import get_percentage
 from util.misc import get_time
 from util.pokemon import get_pokemon_data
-from util.print_fns import print_encounter_data, print_is_in_picture, print_pokemon_name
+from util.print_fns import print_encounter_data, print_is_in_picture, print_pokemon_name, print_with_time
+
+from PIL import Image
 
 def are_images_equal(image_path_one, image_path_two, confidence_threshold, print_fn, print_fn_args):
     try:
@@ -17,7 +17,7 @@ def are_images_equal(image_path_one, image_path_two, confidence_threshold, print
         img_2 = imread(image_path_two, IMREAD_GRAYSCALE)
         
         if img_1 is None or img_2 is None:
-            print(f"Error: Could not read one of the images for name matching.")
+            print_with_time(f"Error: Could not read one of the images for name matching.")
             return False, None
 		
         res = matchTemplate(img_1, img_2, TM_CCOEFF_NORMED)
@@ -32,7 +32,7 @@ def are_images_equal(image_path_one, image_path_two, confidence_threshold, print
             print_fn(**print_fn_args, max_val_percent=max_val_percent, is_found=False)
             return False
     except Exception as e:
-        print(f"Error during name matching: {e}")
+        print_with_time(f"Error during name matching: {e}")
         return False
 
 
@@ -45,23 +45,15 @@ def find_name_in_battle(battle_screen_path, name_template_path, confidence_thres
 def is_in_picture(template_path, image_path, confidence_threshold=0.99):
     return are_images_equal(template_path, image_path, confidence_threshold, print_is_in_picture, {})
 
-def check_for_shiny():
-    monitor_to_capture = get_monitor_to_capture()
+def check_for_shiny(capture_screen, monitor_to_capture):
     if not monitor_to_capture:
-       print("Error: Could not determine capture monitor.")
+       print_with_time("Error: Could not determine capture monitor.")
        return False
 
-    with mss() as sct:
-       sct_img = sct.grab(monitor_to_capture)
-       screen_path = "images/tmp/battle_screen.png"  # Save for comparison
-       img = Image.frombytes("RGB", (sct_img.width, sct_img.height), sct_img.rgb, "raw", "RGB")
-       img.save(screen_path)
+    screen_path = "images/current/battle_screen.png"
+    capture_screen(monitor_to_capture, screen_path)
 
-    db_data = get_db_config()
-    if db_data is None:
-        print("Error: Could not retrieve database configuration.")
-        return False
-
+    db_data = get_db_data()
     total_encounters = db_data["total_encounters"]
     last_shiny = db_data["last_shiny"]
 
@@ -72,7 +64,7 @@ def check_for_shiny():
 
         if name_found:
             if not is_in_picture(screen_path, regular_path):
-                print("Shiny form present! Stopping program.")
+                print_with_time("Shiny form present! Stopping program.")
                 total_encounters += 1
                 update_database_value(f"total_encounters={total_encounters - 1}", f"total_encounters={total_encounters}")
                 update_database_value(f"last_shiny={last_shiny}", f"last_shiny={total_encounters}")
@@ -81,20 +73,23 @@ def check_for_shiny():
                 log_encounter(pokemon_name.capitalize(), True, total_encounters, last_shiny)
                 return True, pokemon_name
             else:
-                print("Regular form present. Continuing.")
+                print_with_time("Regular form present. Continuing.")
                 total_encounters += 1
                 update_database_value(f"total_encounters={total_encounters - 1}", f"total_encounters={total_encounters}")
                 print_encounter_data(total_encounters, last_shiny)
                 log_encounter(pokemon_name.capitalize(), False, total_encounters, last_shiny)
                 return False, pokemon_name
-    print(f"No match found")
+    print_with_time(f"No match found")
     return False
 
-def format_entry(pokemon_name, total_encounters, last_shiny):
-    return {
-        "pokemon": pokemon_name,
-        "time_found": get_time(),
-		"img_path": f"images/shinies/{pokemon_name}_{total_encounters}.png",
-		"last_shiny": last_shiny,
-		"total_encounters": total_encounters
-	}
+def check_for_shiny_magikarp(capture_screen, monitor_to_capture):
+    magikarp_path = "images/pokemon/magikarp/magikarp_static.png"
+    screen_path = "images/current/battle_screen.png"
+
+    if not monitor_to_capture:
+       print_with_time("Error: Could not determine capture monitor.")
+       return False
+
+    capture_screen(monitor_to_capture, screen_path)
+
+    return not are_images_equal(magikarp_path, screen_path, 0.99, print_pokemon_name, { "pokemon_name": "Magikarp" })

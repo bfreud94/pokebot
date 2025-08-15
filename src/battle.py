@@ -1,39 +1,45 @@
-from controls import move_direction, press_button
-from cv2 import COLOR_RGB2GRAY, cvtColor
-from identifier import are_images_equal
+from controls import move_direction, press_button, press_n_times
 from mss import mss
-from numpy import array
 from PIL import Image
-from screen import get_monitor_to_capture, get_primary_monitor_geometry, get_window_geometry
+from screen import capture_image_and_compare, get_monitor_to_capture
 
-from util.misc import get_battle_template_path
-from util.print_fns import print_is_in_battle
+from constants.pokemon import get_pokemon_to_wait_for
+from util.misc import get_battle_template_path, sleep_with_speed
+from util.print_fns import print_with_time
 
-def is_in_battle(confidence_threshold=0.9):
-    template_path = get_battle_template_path()
+def is_in_battle(confidence_threshold=0.9, is_fighting=False):
     monitor_to_capture = get_monitor_to_capture()
     if not monitor_to_capture:
-        print("Error: Could not determine capture monitor.")
+        print_with_time("Error: Could not determine capture monitor.")
         return False
-    with mss() as sct:
-        sct_img = sct.grab(monitor_to_capture)
-        screen = array(sct_img)
-        screen_gray = cvtColor(screen, COLOR_RGB2GRAY)
 
-        pil_img_path = "images/tmp/captured_screen.png"
-        pil_img = Image.frombytes("RGB", (sct_img.width, sct_img.height), sct_img.rgb, "raw", "RGB")
-        pil_img.save(pil_img_path)
-        return are_images_equal(template_path, pil_img_path, confidence_threshold, print_is_in_battle, {})
-    return False
+    pil_img_path = "images/current/battle_screen.png"
+    template_path = get_battle_template_path(is_fighting)
+    return capture_image_and_compare(monitor_to_capture, pil_img_path, template_path)
+
+def is_battle_over():
+    monitor_to_capture = get_monitor_to_capture()
+    if not monitor_to_capture:
+        print_with_time("Error: Could not determine capture monitor.")
+        return False
+
+    pil_img_path = "images/current/battle_complete.png"
+    template_path = "images/templates/battle_complete.png"
+    return capture_image_and_compare(monitor_to_capture, pil_img_path, template_path)
+
+def fight_pokemon():
+    press_n_times('z', 2)
 
 def exit_battle(pokemon_name):
     before_delay = 0.5
     after_delay = 0.5
-    if pokemon_name == 'groudon' or pokemon_name == 'kyogre':
+    should_wait_battle_intro = get_pokemon_to_wait_for(pokemon_name)
+    if should_wait_battle_intro:
         press_button('z', 3, 3)
-    print("Exiting battle...")
-    press_button('z', 5, after_delay)
+        sleep_with_speed(10)
+    print_with_time("Exiting battle...")
+    if not should_wait_battle_intro:
+       press_button('z', 5, after_delay)
     press_button('down')
     press_button('right')
-    press_button('z')
-    press_button('z')
+    press_n_times('z', 2)
