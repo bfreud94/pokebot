@@ -1,15 +1,12 @@
 from cv2 import imread, IMREAD_GRAYSCALE, matchTemplate, minMaxLoc, TM_CCOEFF_NORMED
 from db import add_shiny_entry, get_db_data, format_entry, update_database_value
 from log import log_encounter
-from mss import mss
 from os import path
 
 from util.math import get_percentage
 from util.misc import get_time
 from util.pokemon import get_pokemon_data
 from util.print_fns import print_encounter_data, print_is_in_picture, print_pokemon_name, print_with_time
-
-from PIL import Image
 
 def are_images_equal(image_path_one, image_path_two, confidence_threshold, print_fn, print_fn_args):
     try:

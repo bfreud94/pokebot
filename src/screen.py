@@ -1,14 +1,17 @@
 from identifier import are_images_equal
 
-from PIL import Image, ImageGrab
+import cv2
+import numpy as np
+from mss import mss
 from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly, kCGNullWindowID
 from time import sleep
 
 from util.print_fns import print_is_in_battle, print_with_time
 
 def get_primary_monitor_geometry():
-    screen = ImageGrab.grab()
-    return {"top": 0, "left": 0, "width": screen.width, "height": screen.height}
+    with mss() as sct:
+        monitor = sct.monitors[1]  # Primary monitor
+        return {"top": monitor["top"], "left": monitor["left"], "width": monitor["width"], "height": monitor["height"]}
 
 def get_window_geometry():
     window_title = "mGBA"
@@ -40,13 +43,29 @@ def get_monitor_to_capture():
 
 def capture_screen(monitor_to_capture, screen_path):
     m = monitor_to_capture
-    bbox = (m["left"], m["top"], m["left"] + m["width"], m["top"] + m["height"])
-    img = ImageGrab.grab(bbox=bbox)
-    img.save(screen_path)
+    monitor = {
+        "top": m["top"],
+        "left": m["left"],
+        "width": m["width"],
+        "height": m["height"]
+    }
+    with mss() as sct:
+        screenshot = sct.grab(monitor)
+        frame = np.array(screenshot)
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
+        cv2.imwrite(screen_path, frame)
 
 def capture_image_and_compare(monitor_to_capture, pil_img_path, template_path, confidence_threshold=0.9):
     m = monitor_to_capture
-    bbox = (m["left"], m["top"], m["left"] + m["width"], m["top"] + m["height"])
-    pil_img = ImageGrab.grab(bbox=bbox)
-    pil_img.save(pil_img_path)
+    monitor = {
+        "top": m["top"],
+        "left": m["left"],
+        "width": m["width"],
+        "height": m["height"]
+    }
+    with mss() as sct:
+        screenshot = sct.grab(monitor)
+        frame = np.array(screenshot)
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
+        cv2.imwrite(pil_img_path, frame)
     return are_images_equal(template_path, pil_img_path, confidence_threshold, print_is_in_battle, {})

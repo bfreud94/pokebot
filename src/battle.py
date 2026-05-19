@@ -1,6 +1,4 @@
 from controls import move_direction, press_button, press_n_times
-from mss import mss
-from PIL import Image
 from screen import capture_image_and_compare, get_monitor_to_capture
 
 from constants.pokemon import get_pokemon_to_wait_for
