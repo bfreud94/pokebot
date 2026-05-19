@@ -1,3 +1,4 @@
+from os import getenv
 from time import localtime, sleep, strftime
 
 from util.print_fns import print_with_time
@@ -11,8 +12,11 @@ def get_time():
    return strftime("%Y-%m-%d %H:%M:%S", localtime())
 
 def get_battle_template_path(is_fighting=False):
-    battle_template_path = "images/templates/battle_is_fighting.png" if not is_fighting else "images/templates/trainer_profile_battle.png"
+    battle_template_path = "images/templates/trainer_profile_battle.png"
     return battle_template_path
 
 def is_vowel(char):
     return char.lower() in 'aeiou'
+
+def get_location():
+	return getenv("CURRENT_LOCATION")

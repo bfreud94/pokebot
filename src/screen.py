@@ -1,18 +1,14 @@
 from identifier import are_images_equal
-# from Image import fromBytes
 
-from cv2 import COLOR_RGB2GRAY, cvtColor
-from mss import mss
-from numpy import array
-from PIL import Image
+from PIL import Image, ImageGrab
 from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly, kCGNullWindowID
+from time import sleep
 
 from util.print_fns import print_is_in_battle, print_with_time
 
 def get_primary_monitor_geometry():
-    with mss.mss() as sct:
-        monitor = sct.monitors[1]
-        return {"top": monitor["top"], "left": monitor["left"], "width": monitor["width"], "height": monitor["height"]}
+    screen = ImageGrab.grab()
+    return {"top": 0, "left": 0, "width": screen.width, "height": screen.height}
 
 def get_window_geometry():
     window_title = "mGBA"
@@ -43,18 +39,14 @@ def get_monitor_to_capture():
             return False
 
 def capture_screen(monitor_to_capture, screen_path):
-    with mss() as sct:
-       sct_img = sct.grab(monitor_to_capture)
-       img = Image.frombytes("RGB", (sct_img.width, sct_img.height), sct_img.rgb, "raw", "RGB")
-       img.save(screen_path)
+    m = monitor_to_capture
+    bbox = (m["left"], m["top"], m["left"] + m["width"], m["top"] + m["height"])
+    img = ImageGrab.grab(bbox=bbox)
+    img.save(screen_path)
 
 def capture_image_and_compare(monitor_to_capture, pil_img_path, template_path, confidence_threshold=0.9):
-    with mss() as sct:
-        sct_img = sct.grab(monitor_to_capture)
-        screen = array(sct_img)
-        screen_gray = cvtColor(screen, COLOR_RGB2GRAY)
-
-        pil_img = Image.frombytes("RGB", (sct_img.width, sct_img.height), sct_img.rgb, "raw", "RGB")
-        pil_img.save(pil_img_path)
-        return are_images_equal(template_path, pil_img_path, confidence_threshold, print_is_in_battle, {})
-    return False
+    m = monitor_to_capture
+    bbox = (m["left"], m["top"], m["left"] + m["width"], m["top"] + m["height"])
+    pil_img = ImageGrab.grab(bbox=bbox)
+    pil_img.save(pil_img_path)
+    return are_images_equal(template_path, pil_img_path, confidence_threshold, print_is_in_battle, {})

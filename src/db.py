@@ -3,7 +3,7 @@ from os import getenv
 
 from json import dumps, loads
 
-from util.misc import get_time
+from util.misc import get_location, get_time
 from util.print_fns import print_with_time
 
 def get_db_file():
@@ -95,6 +95,7 @@ def format_entry(pokemon_name, total_encounters, last_shiny):
     current_hunt = total_encounters - last_shiny
     return {
         "pokemon": pokemon_name,
+		"location": get_location(),
         "time_found": get_time(),
         "img_path": f"images/shinies/{pokemon_name}_{current_hunt}.png",
 		"last_shiny": last_shiny,

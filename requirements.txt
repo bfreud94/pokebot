@@ -4,4 +4,4 @@ numpy
 pyautogui
 pillow
 pygetwindow
-Quartz
+python-dotenv

@@ -10,8 +10,11 @@ def print_encounter_data(total_encounters, last_shiny):
     print_with_time(f"Encounters since last shiny: {total_encounters - last_shiny}")
     print("===============================================================================")
 
-def print_pokemon_name(pokemon_name, max_val_percent, is_found):
-    print_with_time(f"{pokemon_name} found! Confidence: {max_val_percent}")
+def print_pokemon_name(pokemon_name, max_val_percent, is_found=False):
+    if is_found:
+        print_with_time(f"{pokemon_name} found! Confidence: {max_val_percent}")
+    else:
+        print_with_time(f"{pokemon_name} not found. Confidence: {max_val_percent}")
 
 def print_is_in_picture(max_val_percent, is_found):
     print_with_time(f"Template found in image! Confidence: {max_val_percent}")
