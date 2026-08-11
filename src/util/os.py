@@ -1,10 +1,10 @@
 from platform import system
-from pynput.keyboard import Key, Controller
 
 os = system()
 
 def get_movement_fns():
     if os == "Windows":
+        from pynput.keyboard import Key, Controller
         keyboard = Controller()
         return {
             "keyDown": lambda key: keyboard.press(key),
@@ -21,6 +21,7 @@ def get_movement_fns():
 
 def get_movement_inputs():
     if os == "Windows":
+        from pynput.keyboard import Key
         return {
             "left": Key.left,
             "right": Key.right,
