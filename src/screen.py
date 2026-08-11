@@ -1,6 +1,6 @@
 from identifier import are_images_equal
 
-import cv2
+from cv2 import COLOR_RGBA2RGB, cvtColor, imwrite
 import numpy as np
 from mss import mss
 from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly, kCGNullWindowID
@@ -49,11 +49,12 @@ def capture_screen(monitor_to_capture, screen_path):
         "width": m["width"],
         "height": m["height"]
     }
+    sleep(0.05)
     with mss() as sct:
         screenshot = sct.grab(monitor)
         frame = np.array(screenshot)
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
-        cv2.imwrite(screen_path, frame)
+        frame = cvtColor(frame, COLOR_RGBA2RGB)
+        imwrite(screen_path, frame)
 
 def capture_image_and_compare(monitor_to_capture, pil_img_path, template_path, confidence_threshold=0.9):
     m = monitor_to_capture
@@ -63,9 +64,10 @@ def capture_image_and_compare(monitor_to_capture, pil_img_path, template_path, c
         "width": m["width"],
         "height": m["height"]
     }
+    sleep(0.05)
     with mss() as sct:
         screenshot = sct.grab(monitor)
         frame = np.array(screenshot)
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
-        cv2.imwrite(pil_img_path, frame)
+        frame = cvtColor(frame, COLOR_RGBA2RGB)
+        imwrite(pil_img_path, frame)
     return are_images_equal(template_path, pil_img_path, confidence_threshold, print_is_in_battle, {})
