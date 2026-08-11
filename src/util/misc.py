@@ -12,7 +12,9 @@ def get_time():
    return strftime("%Y-%m-%d %H:%M:%S", localtime())
 
 def get_battle_template_path(is_fighting=False):
-    battle_template_path = "images/templates/trainer_profile_battle.png"
+    from util.os import get_template_path
+    template_dir = get_template_path()
+    battle_template_path = f"{template_dir}/trainer_profile_battle.png"
     return battle_template_path
 
 def is_vowel(char):

@@ -34,7 +34,11 @@ def are_images_equal(image_path_one, image_path_two, confidence_threshold, print
 
 
 def find_name_in_battle(battle_screen_path, name_template_path, confidence_threshold=0.99):
-    pokemon_name = name_template_path.split("/")[2].capitalize()
+    from util.os import os, get_pokemon_name_from_template
+    if os == "Windows":
+        pokemon_name = name_template_path.split("/")[-1].split("_")[0].capitalize()
+    else:
+        pokemon_name = name_template_path.split("/")[2].capitalize()
     if "Latios" in name_template_path or "Latias" in name_template_path:
         confidence_threshold = 0.999
     return are_images_equal(battle_screen_path, name_template_path, confidence_threshold, print_pokemon_name, { "pokemon_name": pokemon_name })

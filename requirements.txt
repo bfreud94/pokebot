@@ -4,3 +4,5 @@ numpy
 pyautogui
 pygetwindow
 python-dotenv
+pynput
+pywin32
